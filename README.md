@@ -18,7 +18,6 @@ javac -encoding utf-8 RandomDataProvider.java
 ### 编译 & 运行
 
 ## Reader 测试
-### xlsx格式
 
 ================================ EEC ================================
 
