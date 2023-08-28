@@ -38,7 +38,7 @@ public class EasyWriteBenchmarkTest {
     }
     private static void easyWrite(int n, Path path) {
         long start = System.currentTimeMillis();
-        ExcelWriter excelWriter = EasyExcel.write(path.toFile()).withTemplate(path.resolve("../../fill.xlsx").toFile()).build();
+        ExcelWriter excelWriter = EasyExcel.write(path.toFile()).withTemplate(EasyWriteBenchmarkTest.path.getParent().resolve("fill.xlsx").toFile()).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();
         for (int j = 0, p = 1000, c = n / p; j < c; j++) {
             excelWriter.fill(RandomDataProvider.randomData(p), writeSheet);
