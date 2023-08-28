@@ -9,11 +9,11 @@ javac -encoding utf-8 RandomDataProvider.java
 
 ### 极限运行内存
 
-     Tool | Memory
-----------|--------
-EEC       | 5M
-FAST EXCEL| 5M
-EASY EXCEL| 7M
+|      Tool | Memory|
+|-----------|-------|
+|EEC        | 5M    |
+|FAST EXCEL | 5M    |
+|EASY EXCEL | 7M    |
 
 ### 编译 & 运行
 
@@ -99,4 +99,5 @@ java -cp .;./easy-lib/commons-codec-1.13.jar;./easy-lib/commons-collections4-4.4
 
 ## 说明
 
-Fast使用`SharedString`模式，该模式速度不及`innerStr`模式，所以测试得到的Writer速度并不能说明fastexcel写性能不及前两者。EEC也支持`SharedString`模式，只需要在LargeData.java的ExcelColumn注解后面加上`share=true`即可，实际生产环境可以在一些枚举值上开启share可以启到压缩数据的作用。这里的枚举值可以是省市区，状态值，男、女等固定范围的值
+1. Fast使用`SharedString`模式，该模式速度不及`innerStr`模式，所以测试得到的Writer速度并不能说明fastexcel写性能不及前两者。EEC也支持`SharedString`模式，只需要在LargeData.java的ExcelColumn注解后面加上`share=true`即可，实际生产环境可以在一些枚举值上开启share可以启到压缩数据的作用。这里的枚举值可以是省市区，状态值，男、女等固定范围的值
+2. Reader测试类需要指定同一个工具生产的文件，由于每个工具写文件的结果不太相同，所以在测试读的时候需要指定同一工具生产的文件
