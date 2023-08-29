@@ -13,4 +13,4 @@ javac -encoding utf-8 -cp .;./easy-lib/easyexcel-core-3.3.2.jar EasyWriteBenchma
 writer && reader
 
 @rem Cycle reading 10 times
-@rem for /l %%i in (1,1,10) do inner1
+@rem for /l %%i in (1,1,10) do reader

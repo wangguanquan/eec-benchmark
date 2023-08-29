@@ -5,7 +5,6 @@ import org.dhatim.fastexcel.Worksheet;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FastWriteBenchmarkTest {
 
@@ -13,26 +12,24 @@ public class FastWriteBenchmarkTest {
         w1w(); w5w(); w10w(); w50w(); w100w();
     }
 
-    static Path path = Paths.get("./excel-simple");
-
     public static void w1w() {
-        fastWrite(10000, path.resolve("fast-1w.xlsx"));
+        fastWrite(10000, RandomDataProvider.outPath.resolve("fast-1w.xlsx"));
     }
 
     public static void w5w() {
-        fastWrite(50000, path.resolve("fast-5w.xlsx"));
+        fastWrite(50000, RandomDataProvider.outPath.resolve("fast-5w.xlsx"));
     }
 
     public static void w10w() {
-        fastWrite(100000, path.resolve("fast-10w.xlsx"));
+        fastWrite(100000, RandomDataProvider.outPath.resolve("fast-10w.xlsx"));
     }
 
     public static void w50w() {
-        fastWrite(500000, path.resolve("fast-50w.xlsx"));
+        fastWrite(500000, RandomDataProvider.outPath.resolve("fast-50w.xlsx"));
     }
 
     public static void w100w() {
-        fastWrite(1000000, path.resolve("fast-100w.xlsx"));
+        fastWrite(1000000, RandomDataProvider.outPath.resolve("fast-100w.xlsx"));
     }
 
     private static void fastWrite(int n, Path path) {
@@ -87,7 +84,7 @@ public class FastWriteBenchmarkTest {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println(path.getFileName() + " [Fastexcel] write finished. 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println(path.getFileName() + " [Fastexcel] write finished. 耗时(ms): " + (System.currentTimeMillis() - start));
     }
 
 }

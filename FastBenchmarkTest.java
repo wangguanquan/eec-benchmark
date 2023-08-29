@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -12,15 +11,13 @@ import java.util.stream.Stream;
 public class FastBenchmarkTest {
 
     public static void main(String[] args) {
-        try (Stream<Path> stream = Files.list(path)) {
+        try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
             stream.filter(p -> {int i = p.getFileName().toString().lastIndexOf(".xls"), n = p.getFileName().toString().length(); return i == n - 4 || i == n - 5;})
                 .forEach(FastBenchmarkTest::fastExcelRead);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    static Path path = Paths.get("./excel-simple");
 
     private static void fastExcelRead(Path path) {
         long start = System.currentTimeMillis(), n = 0;
@@ -55,7 +52,7 @@ public class FastBenchmarkTest {
             e.printStackTrace();
         }
 
-        System.out.println(path.getFileName() + " [Fastexcel] read finished. 行: " + n + " 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println(path.getFileName() + " [Fastexcel] read finished. 行: " + n + " 耗时(ms): " + (System.currentTimeMillis() - start));
     }
 
 }

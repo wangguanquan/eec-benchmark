@@ -1,22 +1,19 @@
 import org.ttzero.excel.reader.ExcelReader;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.util.stream.Stream;
 
 public class EecBenchmarkTest {
     public static void main(String[] args) {
-        try (Stream<Path> stream = Files.list(path)) {
+        try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
             stream.filter(p -> {int i = p.getFileName().toString().lastIndexOf(".xls"), n = p.getFileName().toString().length(); return i == n - 4 || i == n - 5;})
                 .forEach(EecBenchmarkTest::eecRead);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    static Path path = Paths.get("./excel-simple");
 
     private static void eecRead(Path path) {
         long start = System.currentTimeMillis(), n = 0;
@@ -26,6 +23,6 @@ public class EecBenchmarkTest {
             e.printStackTrace();
         }
 
-        System.out.println(path.getFileName() + " [EEC] read finished. 行: " + n + " 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println(path.getFileName() + " [EEC] read finished. 行: " + n + " 耗时(ms): " + (System.currentTimeMillis() - start));
     }
 }
