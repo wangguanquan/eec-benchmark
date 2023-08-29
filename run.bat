@@ -9,11 +9,8 @@ javac -encoding utf-8 -cp .;./eec-lib/eec-0.5.11-SNAPSHOT.jar EecWriteBenchmarkT
 javac -encoding utf-8 -cp .;./fast-lib/commons-compress-1.23.0.jar;./fast-lib/stax2-api-4.2.jar;./fast-lib/aalto-xml-1.3.2.jar;./fast-lib/fastexcel-0.15.6.jar FastWriteBenchmarkTest.java
 javac -encoding utf-8 -cp .;./easy-lib/easyexcel-core-3.3.2.jar EasyWriteBenchmarkTest.java
 
-@rem do Writer
-writer
-
-@rem do Reader
-reader
+@rem do Writer and Reader
+writer && reader
 
 @rem Cycle reading 10 times
 @rem for /l %%i in (1,1,10) do inner1
