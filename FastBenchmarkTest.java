@@ -2,6 +2,7 @@ import org.dhatim.fastexcel.reader.ReadableWorkbook;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -11,30 +12,14 @@ import java.util.stream.Stream;
 public class FastBenchmarkTest {
 
     public static void main(String[] args) {
-		r1w(); r5w(); r10w(); r50w(); r100w();
+        try (Stream<Path> stream = Files.list(path)) {
+            stream.forEach(FastBenchmarkTest::fastExcelRead);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static Path path = Paths.get("./excel-simple");
-
-    public static void r1w() {
-        fastExcelRead(path.resolve("eec-1w.xlsx"));
-    }
-
-    public static void r5w() {
-        fastExcelRead(path.resolve("eec-5w.xlsx"));
-    }
-
-    public static void r10w() {
-        fastExcelRead(path.resolve("eec-10w.xlsx"));
-    }
-
-    public static void r50w() {
-        fastExcelRead(path.resolve("eec-50w.xlsx"));
-    }
-
-    public static void r100w() {
-        fastExcelRead(path.resolve("eec-100w.xlsx"));
-    }
 
     private static void fastExcelRead(Path path) {
         long start = System.currentTimeMillis(), n = 0;

@@ -60,7 +60,7 @@ public class FastWriteBenchmarkTest {
             ws.value(i, c++, "str14");
             ws.value(i, c, "str15");
             c = 0;
-            for (; ++i < n;  c = 0) {
+            for (; ++i <= n;  c = 0) {
                 LargeData o = RandomDataProvider.randomOne();
                 ws.value(i, c++, o.getNv());
                 ws.value(i, c++, o.getLv());
