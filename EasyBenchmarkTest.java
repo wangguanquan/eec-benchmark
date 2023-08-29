@@ -10,7 +10,8 @@ public class EasyBenchmarkTest {
 
    public static void main(String[] args) {
        try (Stream<Path> stream = Files.list(path)) {
-            stream.forEach(EasyBenchmarkTest::easyRead);
+            stream.filter(p -> {int i = p.getFileName().toString().lastIndexOf(".xls"), n = p.getFileName().toString().length(); return i == n - 4 || i == n - 5;})
+                .forEach(EasyBenchmarkTest::easyRead);
        } catch (IOException e) {
            e.printStackTrace();
        }

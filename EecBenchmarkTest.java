@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 public class EecBenchmarkTest {
     public static void main(String[] args) {
         try (Stream<Path> stream = Files.list(path)) {
-            stream.forEach(EecBenchmarkTest::eecRead);
+            stream.filter(p -> {int i = p.getFileName().toString().lastIndexOf(".xls"), n = p.getFileName().toString().length(); return i == n - 4 || i == n - 5;})
+                .forEach(EecBenchmarkTest::eecRead);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,19 +1,38 @@
+## 介绍
+
+本项目用于EEC性能测试，分别将以1w, 5w, 10w, 50w, 100w5个数量级进行读写测试，如需测试xls只需要将`eec-e3-support`添加进class path即可。
+
+除EEC外还加入了[Fastexcel](https://github.com/dhatim/fastexcel)和[Easyexcel](https://github.com/alibaba/easyexcel)进行对比测试
+
+### 运行时必要依赖比较
+
+只比较运行时必要依赖，所有依赖包均放到各自*-lib下可自行比较
+
+| EEC | FastExcel | Easyexcel |
+|:---:|:---------:|:---------:|
+| <1M | 1.7M      | 21.5M     |
+
+### 编译运行
+
+windows平台使用命令行运行`run`，*unx平台运行
+
+### 一些测试数据
+
+
+### 极限运行内存
+运行java 命令添加参数 `-Xmx5m -Xms5m`
+
+| EEC | FastExcel | Easyexcel |
+|:---:|:---------:|:---------:|
+| 5M  | 5M        | 7M        |
+
+
 ### 编译测试实体
 ```text
 javac -cp .;./eec-lib/eec-0.5.11-SNAPSHOT.jar;./easy-lib/easyexcel-core-3.3.2.jar LargeData.java
 javac -encoding utf-8 RandomDataProvider.java
 ```
 
-### 限制运行内存
-运行java 命令添加参数 `-Xmx5m -Xms5m`
-
-### 极限运行内存
-
-|      Tool | Memory|
-|-----------|-------|
-|EEC        | 5M    |
-|FAST EXCEL | 5M    |
-|EASY EXCEL | 7M    |
 
 ### 编译 & 运行
 
