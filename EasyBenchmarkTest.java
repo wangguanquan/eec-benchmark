@@ -19,6 +19,6 @@ public class EasyBenchmarkTest {
     private static void easyRead(Path path) {
         long start = System.currentTimeMillis();
         EasyExcel.read(path.toFile(), LargeData.class, null).headRowNumber(1).doReadAll();
-        RandomDataProvider.println(path.getFileName() + " [Easyexcel] read finished. 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Easyexcel] read \"" + path.getFileName() + "\" finished. Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }

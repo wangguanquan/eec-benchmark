@@ -23,6 +23,6 @@ public class EecBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println(path.getFileName() + " [EEC] read finished. 行: " + n + " 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[EEC] read \"" + path.getFileName() + "\" finished. Rows: " + n + " cost(ms): " + (System.currentTimeMillis() - start));
     }
 }

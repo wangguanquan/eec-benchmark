@@ -9,7 +9,11 @@ import java.nio.file.Path;
 public class FastWriteBenchmarkTest {
 
     public static void main(String[] args) {
-        w1w(); w5w(); w10w(); w50w(); w100w();
+        w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+    }
+
+    public static void w5k() {
+        fastWrite(5000, RandomDataProvider.outPath.resolve("fast-5k.xlsx"));
     }
 
     public static void w1w() {
@@ -67,7 +71,6 @@ public class FastWriteBenchmarkTest {
                 ws.value(i, c++, o.getStr2());
                 ws.value(i, c++, o.getStr3());
                 ws.value(i, c++, o.getStr4());
-                ws.value(i, c++, o.getStr4());
                 ws.value(i, c++, o.getStr5());
                 ws.value(i, c++, o.getStr6());
                 ws.value(i, c++, o.getStr7());
@@ -84,7 +87,7 @@ public class FastWriteBenchmarkTest {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        RandomDataProvider.println(path.getFileName() + " [Fastexcel] write finished. 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Fastexcel] write \"" + path.getFileName() + "\" finished. Cost(ms): " + (System.currentTimeMillis() - start));
     }
 
 }

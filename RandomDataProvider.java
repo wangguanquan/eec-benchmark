@@ -85,7 +85,7 @@ public class RandomDataProvider {
 
     static {
         try {
-            System.setErr(new PrintStream(Files.newOutputStream(outPath.resolve("1.txt"), StandardOpenOption.APPEND)));
+            System.setErr(new PrintStream(outPath.resolve("1.txt").toFile()));
         } catch (IOException e) {
             e.printStackTrace();
         }

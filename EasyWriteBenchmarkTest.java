@@ -8,7 +8,11 @@ import java.nio.file.Path;
 public class EasyWriteBenchmarkTest {
 
     public static void main(String[] args) {
-        w1w(); w5w(); w10w(); w50w(); w100w();
+        w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+    }
+
+    public static void w5k() {
+        easyWrite(5000, RandomDataProvider.outPath.resolve("easy-5k.xlsx"));
     }
 
     public static void w1w() {
@@ -39,6 +43,6 @@ public class EasyWriteBenchmarkTest {
             excelWriter.fill(RandomDataProvider.randomData(p), writeSheet);
         }
         excelWriter.finish();
-        RandomDataProvider.println(subPath.getFileName() + " [Easyexcel] write finished. 耗时(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Easyexcel] write \"" + subPath.getFileName() + "\" finished. Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }
