@@ -1,10 +1,12 @@
 ## 介绍
 
-本项目用于EEC性能测试，分别将以1w, 5w, 10w, 50w, 100w5个数量级进行读写测试，如需测试xls只需要将`eec-e3-support`添加进class path即可。
+本项目用于EEC性能测试，分别将以1k, 5k, 10k, 50k, 100k, 500k, 1000k 7个数量级进行读写测试
 
-除EEC外还加入了[Fastexcel](https://github.com/dhatim/fastexcel)和[Easyexcel](https://github.com/alibaba/easyexcel)进行对比测试
+除EEC外还加入了[Fastexcel](https://github.com/dhatim/fastexcel) 和[Easyexcel](https://github.com/alibaba/easyexcel) 进行对比测试
 
-### 运行时必要依赖比较
+测试文件统一保存在excel-simple目录下
+
+### 运行时必要依赖包比较
 
 只比较运行时必要依赖，所有依赖包均放到各自*-lib下可自行比较
 
@@ -12,9 +14,19 @@
 |:---:|:---------:|:---------:|
 | <1M | 1.7M      | 21.5M     |
 
-### 编译运行
+### 编译
 
-windows平台使用命令行运行`run`，*unx平台命令行运行`sh ./run.sh`，也可以单独运行`writer`和`reader`测试读写
+执行build脚本
+
+### Writer比较
+
+执行writer脚本，如果对某个工具感兴趣也可以复制脚本中的某行来执行
+
+测试代码均使用`inlineStr`模式，测试数据包含int, long, date和15个字符串，其中有10列包含中文字符
+
+### Reader比较
+
+执行Reader脚本，如果对某个工具感兴趣也可以复制脚本中的某行来执行
 
 ### 一些测试结果
 

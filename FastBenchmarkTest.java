@@ -1,28 +1,35 @@
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 public class FastBenchmarkTest {
 
     public static void main(String[] args) {
         try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
-            stream.filter(p -> {int i = p.getFileName().toString().lastIndexOf(".xls"), n = p.getFileName().toString().length(); return i == n - 4 || i == n - 5;})
+            stream.map(Path::toFile).filter(p -> {int i = p.getName().lastIndexOf(".xls"), n = p.getName().length(); return i == n - 4 || i == n - 5;})
+                .sorted(Comparator.comparingLong(File::length))
                 .forEach(FastBenchmarkTest::fastExcelRead);
+//                .forEach(FastBenchmarkTest::fastExcelFilterRead);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void fastExcelRead(Path path) {
+    /**
+     * 读取并转对象，输出总行数（不包含头）
+     */
+    private static void fastExcelRead(File file) {
         long start = System.currentTimeMillis(), n = 0;
 
-        try (ReadableWorkbook wb = new ReadableWorkbook(path.toFile())) {
+        try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
             try (Stream<org.dhatim.fastexcel.reader.Row> rows = wb.getFirstSheet().openStream()) {
                 n = rows.filter(row -> row.getRowNum() > 1).map(row -> {
                     LargeData t = new LargeData();
@@ -52,7 +59,23 @@ public class FastBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println("[Fastexcel] read \"" + path.getFileName() + "\" finished. Rows: " + n + " cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Fastexcel] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 
+    /**
+     * 统计第1列小于0的行数（不包含头）
+     */
+    private static void fastExcelFilterRead(File file) {
+        long start = System.currentTimeMillis(), n = 0;
+
+        try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
+            try (Stream<org.dhatim.fastexcel.reader.Row> rows = wb.getFirstSheet().openStream()) {
+                n = rows.filter(row -> row.getRowNum() > 1).map(row -> row.getCellAsNumber(0).orElse(BigDecimal.ZERO).intValue()).filter(i -> i < 0).count();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        RandomDataProvider.println("[Fastexcel] filter read \"" + file.getName() + "\" finished. " + n + " rows less than zero Cost(ms): " + (System.currentTimeMillis() - start));
+    }
 }

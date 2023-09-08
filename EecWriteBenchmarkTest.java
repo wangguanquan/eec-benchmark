@@ -10,7 +10,11 @@ import java.util.List;
 public class EecWriteBenchmarkTest {
 
     public static void main(String[] args) {
-		w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+		w1k(); w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+    }
+	
+	public static void w1k() {
+        eecWrite(1000, RandomDataProvider.outPath.resolve("eec-1k.xlsx"));
     }
 
     public static void w5k() {
@@ -18,31 +22,30 @@ public class EecWriteBenchmarkTest {
     }
 
     public static void w1w() {
-        eecWrite(10000, RandomDataProvider.outPath.resolve("eec-1w.xlsx"));
+        eecWrite(10000, RandomDataProvider.outPath.resolve("eec-10k.xlsx"));
     }
 
     public static void w5w() {
-        eecWrite(50000, RandomDataProvider.outPath.resolve("eec-5w.xlsx"));
+        eecWrite(50000, RandomDataProvider.outPath.resolve("eec-50k.xlsx"));
     }
 
     public static void w10w() {
-        eecWrite(100000, RandomDataProvider.outPath.resolve("eec-10w.xlsx"));
+        eecWrite(100000, RandomDataProvider.outPath.resolve("eec-100k.xlsx"));
     }
 
     public static void w50w() {
-        eecWrite(500000, RandomDataProvider.outPath.resolve("eec-50w.xlsx"));
+        eecWrite(500000, RandomDataProvider.outPath.resolve("eec-500k.xlsx"));
     }
 
     public static void w100w() {
-        eecWrite(1000000, RandomDataProvider.outPath.resolve("eec-100w.xlsx"));
+        eecWrite(1000000, RandomDataProvider.outPath.resolve("eec-1000k.xlsx"));
     }
 
     private static void eecWrite(final int n, final Path path) {
         long start = System.currentTimeMillis();
         try {
             new Workbook().addSheet(new ListSheet<LargeData>() {
-                int i = 0;
-                final int p = 1000, c = n / p;
+                int i = 0, p = Math.min(1000, n), c = n / p;
 
                 @Override
                 protected List<LargeData> more() {
@@ -53,6 +56,6 @@ public class EecWriteBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println("[EEC] write \"" + path.getFileName() + "\" finished. Rows: " + n + " cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[EEC] write \"" + path.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }
