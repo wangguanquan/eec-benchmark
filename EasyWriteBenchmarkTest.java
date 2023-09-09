@@ -8,7 +8,11 @@ import java.nio.file.Path;
 public class EasyWriteBenchmarkTest {
 
     public static void main(String[] args) {
-        w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
+        warmup(); w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
+    }
+
+    public static void warmup() {
+        easyWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
     }
 
     public static void w1k() {
@@ -43,10 +47,10 @@ public class EasyWriteBenchmarkTest {
         long start = System.currentTimeMillis();
         ExcelWriter excelWriter = EasyExcel.write(subPath.toFile()).withTemplate(RandomDataProvider.outPath.getParent().resolve("fill.xlsx").toFile()).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();
-        for (int j = 0, p = 1000, c = n / p; j < c; j++) {
+        for (int j = 0, p = Math.min(1000, n), c = n / p; j < c; j++) {
             excelWriter.fill(RandomDataProvider.randomData(p), writeSheet);
         }
         excelWriter.finish();
-        RandomDataProvider.println("[Easyexcel] write \"" + subPath.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Easy] write \"" + subPath.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }

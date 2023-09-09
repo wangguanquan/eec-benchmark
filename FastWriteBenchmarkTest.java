@@ -9,7 +9,11 @@ import java.nio.file.Path;
 public class FastWriteBenchmarkTest {
 
     public static void main(String[] args) {
-        w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
+        warmup(); w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
+    }
+
+    public static void warmup() {
+        fastWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
     }
 
     public static void w1k() {
@@ -91,7 +95,7 @@ public class FastWriteBenchmarkTest {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        RandomDataProvider.println("[Fastexcel] write \"" + path.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Fast] write \"" + path.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 
 }

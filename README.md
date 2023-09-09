@@ -4,6 +4,12 @@
 
 除EEC外还加入了[Fastexcel](https://github.com/dhatim/fastexcel) 和[Easyexcel](https://github.com/alibaba/easyexcel) 进行对比测试
 
+测试包均为当前(2023-09)最新版本
+
+- eec: 0.5.11
+- fastexcel: 0.15.6
+- easyexcel: 3.3.2
+
 测试文件统一保存在excel-simple目录下
 
 ### 运行时必要依赖包比较
@@ -20,13 +26,13 @@
 
 ### Writer比较
 
-执行writer脚本，如果对某个工具感兴趣也可以复制脚本中的某行来执行
+执行writer脚本，其中warmup是一个预抛方法，如果对某个工具感兴趣也可以复制脚本中的某行来执行
 
 测试代码均使用`inlineStr`模式，测试数据包含int, long, date和15个字符串，其中有10列包含中文字符
 
 ### Reader比较
 
-执行Reader脚本，如果对某个工具感兴趣也可以复制脚本中的某行来执行
+执行reader脚本
 
 ### 一些测试结果
 

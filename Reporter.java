@@ -66,7 +66,7 @@ public class Reporter {
             }
         }
 
-        printTable("Average time: total duration / number of tests", v);
+        printTable("平均耗时：读写总耗时/读写次数", v);
         System.out.println();
         printCompare(v);
     }
@@ -80,7 +80,7 @@ public class Reporter {
                 String v = ss[0];
                 if (v.charAt(0) != '[' || v.charAt(v.length() - 1) != ']') return null;
                 v = v.substring(1, v.length() - 1);
-                if (!"EEC".equalsIgnoreCase(v) && !"Easyexcel".equalsIgnoreCase(v) && !"Fastexcel".equalsIgnoreCase(v)) return null;
+                if (!"EEC".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v)) return null;
                 O o = new O();
                 o.tool = v;
 
@@ -128,6 +128,7 @@ public class Reporter {
                 len = ss != null && j < ss.length && ss[j] != null ? ss[j].length() : 0;
                 if (len > lenIndex[j]) lenIndex[j] = len;
             }
+            lenIndex[j] += lenIndex[j] & 1;
         }
 
         System.out.println(message);
@@ -218,7 +219,7 @@ public class Reporter {
             }
         }
 
-        printTable("Compare: Compare processed cells per second", v);
+        printTable("性能比较：每秒处理单元格数量比较[A vs B = (A - B) / B]", v);
     }
 
     static void printLines(int[] lenIndex) {

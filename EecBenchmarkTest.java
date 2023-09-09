@@ -13,7 +13,6 @@ public class EecBenchmarkTest {
             stream.map(Path::toFile).filter(p -> {int i = p.getName().lastIndexOf(".xls"), n = p.getName().length(); return i == n - 4 || i == n - 5;})
                 .sorted(Comparator.comparingLong(File::length))
                 .forEach(EecBenchmarkTest::eecRead);
-//                .forEach(EecBenchmarkTest::eecFilterRead);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,17 +32,4 @@ public class EecBenchmarkTest {
         RandomDataProvider.println("[EEC] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 
-    /**
-     * 统计第1列小于0的行数（不包含头）
-     */
-    private static void eecFilterRead(File file) {
-        long start = System.currentTimeMillis(), n = 0;
-        try (ExcelReader reader = ExcelReader.read(file.toPath())) {
-            n = reader.sheet(0).header(1).rows().filter(row -> row.getInt(0) < 0).count();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        RandomDataProvider.println("[EEC] filter read \"" + file.getName() + "\" finished. " + n + " rows less than zero Cost(ms): " + (System.currentTimeMillis() - start));
-    }
 }

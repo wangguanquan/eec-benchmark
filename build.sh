@@ -1,7 +1,7 @@
 javac -cp .:./eec-lib/eec-0.5.11.jar:./easy-lib/easyexcel-core-3.3.2.jar LargeData.java
 javac -encoding utf-8 RandomDataProvider.java
 javac -encoding utf-8 Reporter.java
-javac -encoding utf-8 -cp .:./eec-lib/eec-0.5.14-SNAPSHOT.jar Warmup.java
+javac -encoding utf-8 -cp .:./eec-lib/eec-0.5.11.jar Warmup.java
 
 javac -encoding utf-8 -cp .:./eec-lib/eec-0.5.11.jar EecBenchmarkTest.java
 javac -encoding utf-8 -cp .:./fast-lib/fastexcel-reader-0.15.6.jar FastBenchmarkTest.java

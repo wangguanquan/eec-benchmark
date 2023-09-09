@@ -10,9 +10,13 @@ import java.util.List;
 public class EecWriteBenchmarkTest {
 
     public static void main(String[] args) {
-		w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
+		warmup(); w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
     }
-	
+
+    public static void warmup() {
+        eecWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
+    }
+
 	public static void w1k() {
         eecWrite(1000, RandomDataProvider.outPath.resolve("eec-1k.xlsx"));
     }

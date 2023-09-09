@@ -17,7 +17,6 @@ public class FastBenchmarkTest {
             stream.map(Path::toFile).filter(p -> {int i = p.getName().lastIndexOf(".xls"), n = p.getName().length(); return i == n - 4 || i == n - 5;})
                 .sorted(Comparator.comparingLong(File::length))
                 .forEach(FastBenchmarkTest::fastExcelRead);
-//                .forEach(FastBenchmarkTest::fastExcelFilterRead);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,23 +58,6 @@ public class FastBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println("[Fastexcel] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
-    }
-
-    /**
-     * 统计第1列小于0的行数（不包含头）
-     */
-    private static void fastExcelFilterRead(File file) {
-        long start = System.currentTimeMillis(), n = 0;
-
-        try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
-            try (Stream<org.dhatim.fastexcel.reader.Row> rows = wb.getFirstSheet().openStream()) {
-                n = rows.filter(row -> row.getRowNum() > 1).map(row -> row.getCellAsNumber(0).orElse(BigDecimal.ZERO).intValue()).filter(i -> i < 0).count();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        RandomDataProvider.println("[Fastexcel] filter read \"" + file.getName() + "\" finished. " + n + " rows less than zero Cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Fast] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }
