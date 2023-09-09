@@ -1,2 +1,2 @@
 # Writer and Reader
-sh ./build.sh && ./writer.sh && ./reader.sh
+sh ./build.sh && ./writer.sh && ./reader.sh && ./report.bat

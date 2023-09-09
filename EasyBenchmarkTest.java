@@ -34,7 +34,7 @@ public class EasyBenchmarkTest {
 
             @Override
             public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-                rows[0] = analysisContext.readRowHolder().getRowIndex();
+                rows[0] = analysisContext.readRowHolder() != null ? analysisContext.readRowHolder().getRowIndex() : 0;
             }
         }).headRowNumber(1).doReadAll();
         RandomDataProvider.println("[Easyexcel] read \"" + file.getName() + "\" finished. Rows: " + rows[0] + " Cost(ms): " + (System.currentTimeMillis() - start));
