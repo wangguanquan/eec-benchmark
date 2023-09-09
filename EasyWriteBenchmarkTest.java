@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public class EasyWriteBenchmarkTest {
 
     public static void main(String[] args) {
-        w1k(); w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+        w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
     }
 
     public static void w1k() {
@@ -19,23 +19,23 @@ public class EasyWriteBenchmarkTest {
         easyWrite(5000, RandomDataProvider.outPath.resolve("easy-5k.xlsx"));
     }
 
-    public static void w1w() {
+    public static void w10k() {
         easyWrite(10000, RandomDataProvider.outPath.resolve("easy-10k.xlsx"));
     }
 
-    public static void w5w() {
+    public static void w50k() {
         easyWrite(50000, RandomDataProvider.outPath.resolve("easy-50k.xlsx"));
     }
 
-    public static void w10w() {
+    public static void w100k() {
         easyWrite(100000, RandomDataProvider.outPath.resolve("easy-100k.xlsx"));
     }
 
-    public static void w50w() {
-        easyWrite(500000, RandomDataProvider.outPath.resolve("easy-50k.xlsx"));
+    public static void w500k() {
+        easyWrite(500000, RandomDataProvider.outPath.resolve("easy-500k.xlsx"));
     }
 
-    public static void w100w() {
+    public static void w1000k() {
         easyWrite(1000000, RandomDataProvider.outPath.resolve("easy-1000k.xlsx"));
     }
 

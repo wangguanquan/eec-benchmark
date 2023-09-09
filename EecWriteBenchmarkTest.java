@@ -10,7 +10,7 @@ import java.util.List;
 public class EecWriteBenchmarkTest {
 
     public static void main(String[] args) {
-		w1k(); w5k(); w1w(); w5w(); w10w(); w50w(); w100w();
+		w1k(); w5k(); w10k(); w50k(); w100k(); w500k(); w1000k();
     }
 	
 	public static void w1k() {
@@ -21,23 +21,23 @@ public class EecWriteBenchmarkTest {
         eecWrite(5000, RandomDataProvider.outPath.resolve("eec-5k.xlsx"));
     }
 
-    public static void w1w() {
+    public static void w10k() {
         eecWrite(10000, RandomDataProvider.outPath.resolve("eec-10k.xlsx"));
     }
 
-    public static void w5w() {
+    public static void w50k() {
         eecWrite(50000, RandomDataProvider.outPath.resolve("eec-50k.xlsx"));
     }
 
-    public static void w10w() {
+    public static void w100k() {
         eecWrite(100000, RandomDataProvider.outPath.resolve("eec-100k.xlsx"));
     }
 
-    public static void w50w() {
+    public static void w500k() {
         eecWrite(500000, RandomDataProvider.outPath.resolve("eec-500k.xlsx"));
     }
 
-    public static void w100w() {
+    public static void w1000k() {
         eecWrite(1000000, RandomDataProvider.outPath.resolve("eec-1000k.xlsx"));
     }
 
