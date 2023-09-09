@@ -60,6 +60,6 @@ public class EecWriteBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println("[EEC] write \"" + path.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Eec] write \"" + path.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }

@@ -66,6 +66,17 @@ public class Reporter {
             }
         }
 
+        // Sort
+        String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
+        for (int j = 0, _j = j + 1; j < sortTable.length - 1; j++, _j++) {
+            i = firstCellIgnoreCase(v, sortTable[j], _j);
+            if (i != _j) {
+                String[] t = v[_j];
+                v[_j] = v[i];
+                v[i] = t;
+            }
+        }
+
         printTable("平均耗时：读写总耗时/读写次数", v);
         System.out.println();
         printCompare(v);
@@ -80,7 +91,7 @@ public class Reporter {
                 String v = ss[0];
                 if (v.charAt(0) != '[' || v.charAt(v.length() - 1) != ']') return null;
                 v = v.substring(1, v.length() - 1);
-                if (!"EEC".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v)) return null;
+                if (!"Eec".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v)) return null;
                 O o = new O();
                 o.tool = v;
 
@@ -258,6 +269,14 @@ public class Reporter {
         if (v1 == null || v2 == null || v2.equals(0)) return "-";
         double v = ((int) (10000.0 * (v1 - v2) / v2 + 0.5)) / 100.0;
         return v + "%" + (v > 0 ? '↑' : '↓');
+    }
+
+    static int firstCellIgnoreCase(String[][] array, String v, int from) {
+        int i;
+        for(i = from; i < array.length; ++i) {
+            if (v.equalsIgnoreCase(array[i][0])) return i;
+        }
+        return -1;
     }
 
     static class O {

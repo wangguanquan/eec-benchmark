@@ -29,7 +29,7 @@ public class EecBenchmarkTest {
             e.printStackTrace();
         }
 
-        RandomDataProvider.println("[EEC] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
+        RandomDataProvider.println("[Eec] read \"" + file.getName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 
 }
