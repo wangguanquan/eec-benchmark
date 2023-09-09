@@ -1,4 +1,6 @@
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.read.listener.ReadListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,17 @@ public class EasyBenchmarkTest {
      */
     private static void easyRead(File file) {
         long start = System.currentTimeMillis();
-        EasyExcel.read(file, LargeData.class, null).headRowNumber(1).doReadAll();
-        RandomDataProvider.println("[Easyexcel] read \"" + file.getName() + "\" finished. Cost(ms): " + (System.currentTimeMillis() - start));
+        int[] rows = { 0 };
+        EasyExcel.read(file, LargeData.class, new ReadListener<LargeData>() {
+
+            @Override
+            public void invoke(LargeData o, AnalysisContext analysisContext) { }
+
+            @Override
+            public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+                rows[0] = analysisContext.readRowHolder().getRowIndex();
+            }
+        }).headRowNumber(1).doReadAll();
+        RandomDataProvider.println("[Easyexcel] read \"" + file.getName() + "\" finished. Rows: " + rows[0] + " Cost(ms): " + (System.currentTimeMillis() - start));
     }
 }
