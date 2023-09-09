@@ -77,7 +77,7 @@ public class Reporter {
             }
         }
 
-        printTable("平均耗时：读写总耗时/读写次数", v);
+        printTable("平均耗时：读写总耗时/读写次数" + System.lineSeparator() + "Cells/s： 平均每秒处理多少单元格", v);
         System.out.println();
         printCompare(v);
     }
