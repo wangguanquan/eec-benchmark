@@ -12,7 +12,8 @@ public class EasyWriteBenchmarkTest {
     }
 
     public static void warmup() {
-        easyWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
+        for (int i = 0; i < 3; i++)
+            easyWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
     }
 
     public static void w1k() {

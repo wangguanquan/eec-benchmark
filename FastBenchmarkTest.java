@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 public class FastBenchmarkTest {
 
     public static void main(String[] args) {
+        fastExcelRead(RandomDataProvider.outPath.resolve("ignore.xlsx").toFile());
+        fastExcelRead(RandomDataProvider.outPath.resolve("ignore.xlsx").toFile());
         try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
             stream.map(Path::toFile).filter(p -> {int i = p.getName().lastIndexOf(".xls"), n = p.getName().length(); return i == n - 4 || i == n - 5;})
                 .sorted(Comparator.comparingLong(File::length))

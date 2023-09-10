@@ -1,1 +1,1 @@
-java Reporter
+java -cp .;./out Reporter

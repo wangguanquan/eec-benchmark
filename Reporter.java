@@ -70,7 +70,7 @@ public class Reporter {
         String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
         for (int j = 0, _j = j + 1; j < sortTable.length - 1; j++, _j++) {
             i = firstCellIgnoreCase(v, sortTable[j], _j);
-            if (i != _j) {
+            if (i >= 0 && i != _j) {
                 String[] t = v[_j];
                 v[_j] = v[i];
                 v[i] = t;
@@ -274,7 +274,7 @@ public class Reporter {
     static int firstCellIgnoreCase(String[][] array, String v, int from) {
         int i;
         for(i = from; i < array.length; ++i) {
-            if (v.equalsIgnoreCase(array[i][0])) return i;
+            if (array[i] != null && v.equalsIgnoreCase(array[i][0])) return i;
         }
         return -1;
     }

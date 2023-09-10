@@ -13,7 +13,8 @@ public class FastWriteBenchmarkTest {
     }
 
     public static void warmup() {
-        fastWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
+        for (int i = 0; i < 3; i++)
+            fastWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
     }
 
     public static void w1k() {

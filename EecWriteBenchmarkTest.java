@@ -14,7 +14,8 @@ public class EecWriteBenchmarkTest {
     }
 
     public static void warmup() {
-        eecWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
+        for (int i = 0; i < 3; i++)
+            eecWrite(10, RandomDataProvider.outPath.resolve("ignore.xlsx"));
     }
 
 	public static void w1k() {
