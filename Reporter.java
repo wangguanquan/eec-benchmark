@@ -17,6 +17,7 @@ public class Reporter {
         Map<String, List<O>> map = list.stream().collect(Collectors.groupingBy(O::getTool));
         String[][] v = new String[(map.size() << 1) + 1][];
         int i = 0;
+        // TODO group by shared
         for (Map.Entry<String, List<O>> entry : map.entrySet()) {
             List<O> sub = entry.getValue();
             String tool = entry.getKey();
@@ -91,7 +92,7 @@ public class Reporter {
                 String v = ss[0];
                 if (v.charAt(0) != '[' || v.charAt(v.length() - 1) != ']') return null;
                 v = v.substring(1, v.length() - 1);
-                if (!"Eec".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v)) return null;
+                if (!"Eec".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v) && !"Eec-SST".equalsIgnoreCase(v) && !"Fast-EEC".equalsIgnoreCase(v)) return null;
                 O o = new O();
                 o.tool = v;
 
@@ -103,9 +104,10 @@ public class Reporter {
                 // 2: file name
                 v = ss[2];
                 if (v.charAt(0) != '"' || v.charAt(v.length() - 1) != '"') return null;
-                int i = v.indexOf('-'), j = i > 0 ? v.indexOf('.', i + 2) : -1;
+                int i = v.lastIndexOf('-'), j = i > 0 ? v.indexOf('.', i + 2) : -1;
                 if (j > i) o.fn = v.substring(i + 1, j);
                 if (o.fn == null || o.fn.equalsIgnoreCase("ignore.xlsx") || o.fn.equalsIgnoreCase("ignore.xls")) return null;
+                o.shared = v.contains("-shared-") ? 1 : 0;
 
                 // 5: rows
                 v = ss[4].toLowerCase();
@@ -187,7 +189,7 @@ public class Reporter {
 
         v = new String[3][];
 
-        int limit = count(Math.max(w.size(), r.size()), 2) + 1;
+        int limit = c2(Math.max(w.size(), r.size())) + 1;
         if (!w.isEmpty()) {
             String[] keys = w.keySet().toArray(new String[w.size()]);
             v[0] = new String[limit];
@@ -255,14 +257,8 @@ public class Reporter {
         return null;
     }
 
-    static int count(int u, int l) {
-        if (u < l) return 0;
-        if (u == l) return 1;
-        if (l > u >> 1) l = u - l;
-        if (l == 1) return u;
-        int t = u;
-        for (int i = 1; i < l; t = t * (u - i) / (i + 1), i++);
-        return t;
+    static int c2(int u) {
+        return u > 2 ? u * (u - 1) >> 1 : 1;
     }
 
     static String percentage(Integer v1, Integer v2) {
@@ -284,7 +280,7 @@ public class Reporter {
         int rows, cost;
         // 1: write
         // 2: read
-        int rw;
+        int rw, shared = 0;
 
         public String getTool() {
             return tool;

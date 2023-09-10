@@ -2,7 +2,7 @@
 
 本项目用于Eec性能测试，分别将以1k, 5k, 10k, 50k, 100k, 500k, 1000k 7个数量级进行读写测试
 
-除[Eec](https://github.com/wangguanquan/eec) 外还加入了[Fastexcel](https://github.com/dhatim/fastexcel) 和[Easyexcel](https://github.com/alibaba/easyexcel) 进行对比测试
+除 [Eec](https://github.com/wangguanquan/eec) 外还加入了 [Fastexcel](https://github.com/dhatim/fastexcel) 和 [Easyexcel](https://github.com/alibaba/easyexcel) 进行对比测试
 
 测试包均为当前最新版本(2023-09)
 
