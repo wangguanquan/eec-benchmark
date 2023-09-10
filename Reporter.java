@@ -142,7 +142,7 @@ public class Reporter {
             lenIndex[j] += lenIndex[j] & 1;
         }
 
-        System.out.println(message);
+        if (message != null && !message.isEmpty()) System.out.println(message);
 
         for (int j = 0, h = 0, r = 0, len = v.length; j < len; j++, h = 0, r++) {
             String[] x = v[j];
