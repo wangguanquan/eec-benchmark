@@ -86,6 +86,13 @@ public class RandomDataProvider {
 
     static BufferedWriter logWriter;
     static {
+        if (!Files.exists(outPath)) {
+            try {
+                Files.createDirectory(outPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             logWriter = Files.newBufferedWriter(outPath.resolve("1.out"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
