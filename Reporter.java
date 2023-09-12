@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,14 +11,94 @@ import java.util.stream.Stream;
 
 public class Reporter {
 
+    final static String GROUP_KEY = "G:";
+
     public static void main(String[] args) {
         List<O> list = parseLogs();
         if (list == null) return;
+        // inlineStr 统计
+        List<O> inlineList = list.stream().filter(o -> o.shared == 0).collect(Collectors.toList());
+        String[][] v = statistics(inlineList);
 
+        // Sort
+        sort(v);
+
+        // SharedString 统计
+        List<O> sharedList = list.stream().filter(o -> o.shared == 1).collect(Collectors.toList());
+        if (!sharedList.isEmpty()) {
+            String[][] v2 = statistics(sharedList);
+
+            // Sort
+            sort(v2);
+            // Group: 以'G:'开头
+            v2[0] = new String[] { GROUP_KEY + "↓Shared String↓" };
+            // Join
+            String[][] _v = new String[v.length + v2.length][];
+            System.arraycopy(v, 0, _v, 0, v.length);
+            System.arraycopy(v2, 0, _v, v.length, v2.length);
+            v = _v;
+        }
+
+        printTable("平均耗时：读写总耗时/读写次数" + System.lineSeparator() + "Cells/s： 平均每秒处理多少单元格", v);
+        System.out.println();
+        printCompare(v);
+    }
+
+    static List<O> parseLogs() {
+        try (Stream<String> lines = Files.lines(RandomDataProvider.outPath.resolve("1.out"))) {
+            return lines.map(s -> {
+                String[] ss = s.split(" ");
+                if (ss.length < 5) return null;
+                // 0: tool
+                String v = ss[0];
+                if (v.charAt(0) != '[' || v.charAt(v.length() - 1) != ']') return null;
+                v = v.substring(1, v.length() - 1);
+                if (!"Eec".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v)) return null;
+                O o = new O();
+                o.tool = v;
+
+                // 1: r/w
+                v = ss[1];
+                if ("write".equalsIgnoreCase(v)) o.rw = 1;
+                else if ("read".equalsIgnoreCase(v)) o.rw = 2;
+
+                // 2: file name
+                v = ss[2];
+                if (v.charAt(0) != '"' || v.charAt(v.length() - 1) != '"') return null;
+                int i = v.lastIndexOf('-'), j = i > 0 ? v.indexOf('.', i + 2) : -1;
+                if (j > i) o.fn = v.substring(i + 1, j);
+                if (o.fn == null || o.fn.equalsIgnoreCase("ignore.xlsx") || o.fn.equalsIgnoreCase("ignore.xls")) return null;
+                o.shared = v.contains("-shared-") ? 1 : 0;
+
+                // 5: rows
+                v = ss[4].toLowerCase();
+                if (v.startsWith("rows")) {
+                    v = ss[5];
+                    Integer iv = toInteger(v);
+                    if (iv != null) o.rows = iv;
+                    else o.rows = (iv = toInteger(o.fn)) != null ? iv : 0;
+
+                    v = ss[6].toLowerCase();
+                }
+
+                if (v.startsWith("cost")) {
+                    v = ss[7];
+                    Integer c = toInteger(v);
+                    if (c != null) o.cost = c;
+                }
+
+                return o;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    static String[][] statistics(List<O> list) {
         Map<String, List<O>> map = list.stream().collect(Collectors.groupingBy(O::getTool));
         String[][] v = new String[(map.size() << 1) + 1][];
         int i = 0;
-        // TODO group by shared
         for (Map.Entry<String, List<O>> entry : map.entrySet()) {
             List<O> sub = entry.getValue();
             String tool = entry.getKey();
@@ -66,10 +147,12 @@ public class Reporter {
                 __[j] = String.valueOf((long) (rows[1] * 19.0 / cost[1] * 1000 + 0.5));
             }
         }
+        return v;
+    }
 
-        // Sort
-        String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
-        for (int j = 0, _j = j + 1; j < sortTable.length - 1; j++, _j++) {
+    static String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
+    static void sort(String[][] v) {
+        for (int i, j = 0, _j = j + 1; j < sortTable.length - 1; j++, _j++) {
             i = firstCellIgnoreCase(v, sortTable[j], _j);
             if (i >= 0 && i != _j) {
                 String[] t = v[_j];
@@ -77,71 +160,16 @@ public class Reporter {
                 v[i] = t;
             }
         }
-
-        printTable("平均耗时：读写总耗时/读写次数" + System.lineSeparator() + "Cells/s： 平均每秒处理多少单元格", v);
-        System.out.println();
-        printCompare(v);
-    }
-
-    static List<O> parseLogs() {
-        try (Stream<String> lines = Files.lines(RandomDataProvider.outPath.resolve("1.out"))) {
-            return lines.map(s -> {
-                String[] ss = s.split(" ");
-                if (ss.length < 5) return null;
-                // 0: tool
-                String v = ss[0];
-                if (v.charAt(0) != '[' || v.charAt(v.length() - 1) != ']') return null;
-                v = v.substring(1, v.length() - 1);
-                if (!"Eec".equalsIgnoreCase(v) && !"Easy".equalsIgnoreCase(v) && !"Fast".equalsIgnoreCase(v) && !"Eec-SST".equalsIgnoreCase(v) && !"Fast-EEC".equalsIgnoreCase(v)) return null;
-                O o = new O();
-                o.tool = v;
-
-                // 1: r/w
-                v = ss[1];
-                if ("write".equalsIgnoreCase(v)) o.rw = 1;
-                else if ("read".equalsIgnoreCase(v)) o.rw = 2;
-
-                // 2: file name
-                v = ss[2];
-                if (v.charAt(0) != '"' || v.charAt(v.length() - 1) != '"') return null;
-                int i = v.lastIndexOf('-'), j = i > 0 ? v.indexOf('.', i + 2) : -1;
-                if (j > i) o.fn = v.substring(i + 1, j);
-                if (o.fn == null || o.fn.equalsIgnoreCase("ignore.xlsx") || o.fn.equalsIgnoreCase("ignore.xls")) return null;
-                o.shared = v.contains("-shared-") ? 1 : 0;
-
-                // 5: rows
-                v = ss[4].toLowerCase();
-                if (v.startsWith("rows")) {
-                    v = ss[5];
-                    Integer iv = toInteger(v);
-                    if (iv != null) o.rows = iv;
-                    else o.rows = (iv = toInteger(o.fn)) != null ? iv : 0;
-
-                    v = ss[6].toLowerCase();
-                }
-
-                if (v.startsWith("cost")) {
-                    v = ss[7];
-                    Integer c = toInteger(v);
-                    if (c != null) o.cost = c;
-                }
-
-                return o;
-            }).filter(Objects::nonNull).collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     static void printTable(String message, String[][] v) {
         int[] lenIndex = new int[v[0].length];
         for (int j = 0, len; j < lenIndex.length; j++) {
             for (String[] ss : v) {
-                len = ss != null && j < ss.length && ss[j] != null ? ss[j].length() : 0;
+                len = ss != null && j < ss.length && ss[j] != null && !ss[j].startsWith(GROUP_KEY) ? stringWidth(ss[j]) : 0;
                 if (len > lenIndex[j]) lenIndex[j] = len;
             }
-            lenIndex[j] += lenIndex[j] & 1;
+            lenIndex[j] += (lenIndex[j] & 1) + 2;
         }
 
         if (message != null && !message.isEmpty()) System.out.println(message);
@@ -151,21 +179,37 @@ public class Reporter {
             if (x == null) continue;
             boolean firstRow = r == 0;
             if (firstRow) printLines(lenIndex);
+            // Group line
+            if (x[0].startsWith(GROUP_KEY)) {
+                String groupName = x[0].substring(2);
+                printLines(lenIndex);
+                System.out.print("|");
+                int append = Arrays.stream(lenIndex).sum() + lenIndex.length - stringWidth(groupName) - 1, right = append >> 1, left = append - right;
+                for (int c = 0; c < right; c++) System.out.print(' ');
+                System.out.print(groupName);
+                for (int c = 0; c < left; c++) System.out.print(' ');
+                System.out.print('|');
+                System.out.println();
+                printLines(lenIndex);
+                continue;
+            }
             System.out.print('|');
             for (String s : x) {
-                int append = lenIndex[h++] - s.length();
-                if (firstRow) {
-                    int half = append >> 1, last = append - half;
-                    for (int c = 0; c < half; c++) System.out.print(' ');
-                    System.out.print(' ');
-                    System.out.print(s);
-                    for (int c = 0; c < last; c++) System.out.print(' ');
-                } else {
-                    for (int c = 0; c < append; c++) System.out.print(' ');
-                    System.out.print(' ');
-                    System.out.print(s);
-                }
-                System.out.print(" |");
+                boolean notNull = s != null;
+                int append = lenIndex[h++] - (notNull ? stringWidth(s) : 0);
+                if (notNull) {
+                    if (firstRow) {
+                        int right = append >> 1, left = append - right;
+                        for (int c = 0; c < right; c++) System.out.print(' ');
+                        System.out.print(s);
+                        for (int c = 0; c < left; c++) System.out.print(' ');
+                    } else {
+                        for (int c = 0, n = append - 1; c < n; c++) System.out.print(' ');
+                        System.out.print(s);
+                        System.out.print(' ');
+                    }
+                } else for (int c = 0; c < append; c++) System.out.print(' ');
+                System.out.print('|');
             }
             System.out.println();
 
@@ -175,8 +219,25 @@ public class Reporter {
     }
 
     static void printCompare(String[][] v) {
+        String[][] vv = {};
+        int i = 1, j = i;
+        for (; j < v.length; ) {
+            for (; j < v.length && (v[j] == null || !v[j][0].startsWith(GROUP_KEY)); j++) ;
+            String[][] _v = groupCompare(v, i, j);
+            if (vv.length > 0) _v[0] = v[i - 1];
+            String[][] newV = new String[vv.length + _v.length][];
+            System.arraycopy(vv, 0, newV, 0, vv.length);
+            System.arraycopy(_v, 0, newV, vv.length, _v.length);
+            vv = newV;
+            i = ++j;
+        }
+
+        printTable("性能比较：每秒处理单元格数量比较[A vs B = (A - B) / B]", vv);
+    }
+
+    static String[][] groupCompare(String[][] v, int from, int to) {
         Map<String, Integer> r = new LinkedHashMap<>(), w = new LinkedHashMap<>();
-        for (int i = 1; i < v.length; i++) {
+        for (int i = from; i < to; i++) {
             String[] x = v[i];
             if (x == null) continue;
             String fn = x[0], a = fn.substring(0, fn.length() - 3);
@@ -206,18 +267,24 @@ public class Reporter {
         }
 
         if (!r.isEmpty()) {
+            String[] keys = r.keySet().toArray(new String[r.size()]);
             if (v[0] != null) {
-                String[] keys = v[0];
                 v[2] = new String[limit];
                 v[2][0] = "Read";
-                for (int i = 1; i < keys.length; i++) {
-                    String k = v[0][i];
-                    if (k == null || k.isEmpty()) continue;
-                    String k1 = k.substring(0, k.indexOf(' ')), k2 = k.substring(k.lastIndexOf(' ') + 1);
-                    v[2][i] = percentage(r.get(k1), r.get(k2));
+                int a = c2(w.size()) + 1;
+                for (int i = 0; i < keys.length - 1; i++) {
+                    for (int j = i + 1; j < keys.length; j++) {
+                        String t = keys[i] + " vs " + keys[j];
+                        int k = indexOf(v[0], t, 1, a);
+                        if (k >= 0) v[2][k] = percentage(r.get(keys[i]), r.get(keys[j]));
+                        else {
+                            v[0][a] = t;
+                            v[2][a] = percentage(r.get(keys[i]), r.get(keys[j]));
+                            a++;
+                        }
+                    }
                 }
             } else {
-                String[] keys = r.keySet().toArray(new String[r.size()]);
                 v[0] = new String[limit];
                 v[1] = new String[limit];
                 v[0][0] = ""; v[1][0] = "Read";
@@ -231,15 +298,14 @@ public class Reporter {
                 }
             }
         }
-
-        printTable("性能比较：每秒处理单元格数量比较[A vs B = (A - B) / B]", v);
+        return v;
     }
 
     static void printLines(int[] lenIndex) {
         System.out.print('+');
         for (int b = 0; b < lenIndex.length; b++) {
-            for (int c = 0; c <= lenIndex[b]; c++) System.out.print('-');
-            System.out.print("-+");
+            for (int c = 0; c < lenIndex[b]; c++) System.out.print('-');
+            System.out.print("+");
         }
         System.out.println();
     }
@@ -259,6 +325,21 @@ public class Reporter {
 
     static int c2(int u) {
         return u > 2 ? u * (u - 1) >> 1 : 1;
+    }
+
+    static int indexOf(String[] v, String s, int from, int to) {
+        if (from < to) {
+            for (; from < to; from++) {
+                if (s.equals(v[from])) return from;
+            }
+        }
+        return -1;
+    }
+
+    static int stringWidth(String v) {
+//        int bl = v.getBytes(StandardCharsets.UTF_8).length, cl = v.length();
+//        return cl + ((bl - cl + 1) >> 1);
+        return v.length();
     }
 
     static String percentage(Integer v1, Integer v2) {
