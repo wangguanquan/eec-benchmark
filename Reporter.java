@@ -223,6 +223,7 @@ public class Reporter {
         int i = 1, j = i;
         for (; j < v.length; ) {
             for (; j < v.length && (v[j] == null || !v[j][0].startsWith(GROUP_KEY)); j++) ;
+            // TODO 多个分组可能导致数据无法对齐的问题
             String[][] _v = groupCompare(v, i, j);
             if (vv.length > 0) _v[0] = v[i - 1];
             String[][] newV = new String[vv.length + _v.length][];
