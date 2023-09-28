@@ -2,6 +2,7 @@ import java.nio.file.Files;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,18 @@ public class Reporter {
     public static void main(String[] args) {
         List<O> list = parseLogs();
         if (list == null) return;
+
+        // Collect headers
+        List<String> headerList = list.stream().map(O::getFn).distinct().sorted(Comparator.comparingInt(Reporter::toNumber)).collect(Collectors.toList());
+        String[] headers = new String[headerList.size() + 2];
+        headers[0] = "TOOLS";
+        int i = 1;
+        for (String h : headerList) headers[i++] = h;
+        headers[i] = "Cells/s";
+
         // inlineStr 统计
         List<O> inlineList = list.stream().filter(o -> o.shared == 0).collect(Collectors.toList());
-        String[][] v = statistics(inlineList);
+        String[][] v = statistics(inlineList, headers);
 
         // Sort
         sort(v);
@@ -26,16 +36,18 @@ public class Reporter {
         // SharedString 统计
         List<O> sharedList = list.stream().filter(o -> o.shared == 1).collect(Collectors.toList());
         if (!sharedList.isEmpty()) {
-            String[][] v2 = statistics(sharedList);
+            String[][] v2 = statistics(sharedList, headers);
 
             // Sort
             sort(v2);
-            // Group: 以'G:'开头
-            v2[0] = new String[] { GROUP_KEY + "↓Shared String↓" };
+
             // Join
             String[][] _v = new String[v.length + v2.length][];
+
             System.arraycopy(v, 0, _v, 0, v.length);
             System.arraycopy(v2, 0, _v, v.length, v2.length);
+            // Group: 以'G:'开头
+            _v[v.length] = new String[] { GROUP_KEY + "↓Shared String↓" };
             v = _v;
         }
 
@@ -95,15 +107,15 @@ public class Reporter {
         return null;
     }
 
-    static String[][] statistics(List<O> list) {
+    static String[][] statistics(List<O> list, String[] headers) {
         Map<String, List<O>> map = list.stream().collect(Collectors.groupingBy(O::getTool));
-        String[][] v = new String[(map.size() << 1) + 1][];
-        int i = 0;
+        String[][] v = new String[Math.max(map.size() << 1, 6) + 1][];
+        v[0] = Arrays.copyOf(headers, headers.length);
+        int i = 1, j;
         for (Map.Entry<String, List<O>> entry : map.entrySet()) {
             List<O> sub = entry.getValue();
             String tool = entry.getKey();
-            sub.sort(Comparator.comparingInt(O::getRows));
-            Map<String, A> r = new LinkedHashMap<>(), w = new LinkedHashMap<>();
+            Map<String, A> r = new HashMap<>(), w = new HashMap<>();
             long[] rows = { 0L, 0L }, cost = { 0L, 0L };
             for (O o : sub) {
                 Map<String, A> t = o.rw == 1 ? w : r;
@@ -114,49 +126,46 @@ public class Reporter {
                 rows[o.rw - 1] += o.rows;
                 cost[o.rw - 1] += o.cost;
             }
-            int j = 1, len = !r.isEmpty() ? r.size() : w.size();
-            if (i == 0) {
-                String[] __ = new String[len + 2], titles = !r.isEmpty() ? r.keySet().toArray(new String[r.size()]) : w.keySet().toArray(new String[w.size()]);
-                v[i++] = __;
-                __[0] = "TOOLS";
-                for (String s : titles) __[j++] = s;
-                __[j] = "Cells/s";
-            }
-
             if (!w.isEmpty()) {
-                String[] __ = new String[w.size() + 2];
+                String[] __ = new String[headers.length];
                 v[i++] = __;
                 __[0] = tool + "(w)";
                 j = 1;
-                for (A a : w.values()) {
-                    long avg = (long) (1.0D * a.a / a.b + 0.5D);
-                    __[j++] = String.valueOf(avg);
+                for (; j < headers.length - 1; j++) {
+                    A a = w.get(headers[j]);
+                    if (a != null) {
+                        long avg = (long) (1.0D * a.a / a.b + 0.5D);
+                        __[j] = String.valueOf(avg);
+                    } else __[j] = "-";
                 }
-                __[j] = String.valueOf((long) (rows[0] * 19.0 / cost[0] * 1000 + 0.5));
+                __[j] = String.valueOf((long) (rows[0] * 19.0 / cost[0] * 1000 + 0.5)); // 19为列数量，这里计算的是总单元格数量=row*column
             }
 
             if (!r.isEmpty()) {
-                String[] __ = new String[r.size() + 2];
+                String[] __ = new String[headers.length];
                 v[i++] = __;
                 __[0] = tool + "(r)";
                 j = 1;
-                for (A a : r.values()) {
-                    long avg = (long) (1.0D * a.a / a.b + 0.5D);
-                    __[j++] = String.valueOf(avg);
+                for (; j < headers.length - 1; j++) {
+                    A a = r.get(headers[j]);
+                    if (a != null) {
+                        long avg = (long) (1.0D * a.a / a.b + 0.5D);
+                        __[j] = String.valueOf(avg);
+                    } else __[j] = "-";
                 }
-                __[j] = String.valueOf((long) (rows[1] * 19.0 / cost[1] * 1000 + 0.5));
+                __[j] = String.valueOf((long) (rows[1] * 19.0 / cost[1] * 1000 + 0.5)); // 19为列数量，这里计算的是总单元格数量=row*column
             }
         }
         return v;
     }
 
-    static String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
+    final static String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
     static void sort(String[][] v) {
-        for (int i, j = 0, _j = j + 1; j < sortTable.length - 1; j++, _j++) {
-            i = firstCellIgnoreCase(v, sortTable[j], _j);
-            if (i >= 0 && i != _j) {
-                String[] t = v[_j];
-                v[_j] = v[i];
+        for (int i, j = 0; j < sortTable.length; j++) {
+            i = firstCellIgnoreCase(v, sortTable[j], 0);
+            if (i >= 0 && i != j) {
+                String[] t = v[j];
+                v[j] = v[i];
                 v[i] = t;
             }
         }
@@ -164,12 +173,20 @@ public class Reporter {
 
     static void printTable(String message, String[][] v) {
         int[] lenIndex = new int[v[0].length];
+        int groupLen = 0, subLen;
         for (int j = 0, len; j < lenIndex.length; j++) {
             for (String[] ss : v) {
-                len = ss != null && j < ss.length && ss[j] != null && !ss[j].startsWith(GROUP_KEY) ? stringWidth(ss[j]) : 0;
+                boolean isGroup = false;
+                len = ss != null && j < ss.length && ss[j] != null && !(isGroup = ss[j].startsWith(GROUP_KEY)) ? stringWidth(ss[j]) : 0;
                 if (len > lenIndex[j]) lenIndex[j] = len;
+                if (isGroup && groupLen < (subLen = stringWidth(ss[j]))) groupLen = subLen;
             }
             lenIndex[j] += (lenIndex[j] & 1) + 2;
+        }
+        if (groupLen > 0) {
+            groupLen += (groupLen & 1) + 2;
+            int lenSum = Arrays.stream(lenIndex).sum();
+            if (groupLen > lenSum) lenIndex[lenIndex.length - 1] += groupLen - lenSum;
         }
 
         if (message != null && !message.isEmpty()) System.out.println(message);
@@ -357,6 +374,24 @@ public class Reporter {
         return -1;
     }
 
+    static int toNumber(String v) {
+        int n = 0;
+        for (int i = 0, len = v.length(); i < len; i++) {
+            char c = v.charAt(i);
+            if (c >= '0' && c <= '9') n = (n * 10) + (c - '0');
+            else if (c == 'k' || c == 'K') {
+                if (c < len - 1) break;
+                n *= 1000;
+            }
+            else if (c == 'w' || c == 'W') {
+                if (c < len - 1) break;
+                n *= 10000;
+            }
+            else break;
+        }
+        return n;
+    }
+
     static class O {
         String tool, fn;
         int rows, cost;
@@ -378,7 +413,7 @@ public class Reporter {
 
         @Override
         public String toString() {
-            return tool + " " + fn + " " + rows + " " + cost + " " + (rw == 1 ? "w" : "r");
+            return tool + (shared == 1 ? "(shared) " : " ") + fn + " " + rows + " " + cost + " " + (rw == 1 ? "w" : "r");
         }
     }
 
