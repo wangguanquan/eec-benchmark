@@ -25,7 +25,7 @@ public class FastBenchmarkTest {
     }
 
     /**
-     * 读取并转对象，输出总行数（不包含头）
+     * 读取并转对象，输出总行数（不包含表头）
      */
     private static void fastExcelRead(File file) {
         long start = System.currentTimeMillis(), n = 0;

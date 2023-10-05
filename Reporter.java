@@ -159,7 +159,7 @@ public class Reporter {
         return v;
     }
 
-    final static String[] sortTable = { "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
+    final static String[] sortTable = { "TOOLS", "Eec(w)", "Fast(w)", "Easy(w)", "Eec(r)", "Fast(r)", "Easy(r)" };
     static void sort(String[][] v) {
         for (int i, j = 0; j < sortTable.length; j++) {
             i = firstCellIgnoreCase(v, sortTable[j], 0);
@@ -212,20 +212,18 @@ public class Reporter {
             }
             System.out.print('|');
             for (String s : x) {
-                boolean notNull = s != null;
-                int append = lenIndex[h++] - (notNull ? stringWidth(s) : 0);
-                if (notNull) {
-                    if (firstRow) {
-                        int right = append >> 1, left = append - right;
-                        for (int c = 0; c < right; c++) System.out.print(' ');
-                        System.out.print(s);
-                        for (int c = 0; c < left; c++) System.out.print(' ');
-                    } else {
-                        for (int c = 0, n = append - 1; c < n; c++) System.out.print(' ');
-                        System.out.print(s);
-                        System.out.print(' ');
-                    }
-                } else for (int c = 0; c < append; c++) System.out.print(' ');
+                if (s == null) s = "-";
+                int append = lenIndex[h++] - stringWidth(s);
+                if (firstRow) {
+                    int right = append >> 1, left = append - right;
+                    for (int c = 0; c < right; c++) System.out.print(' ');
+                    System.out.print(s);
+                    for (int c = 0; c < left; c++) System.out.print(' ');
+                } else {
+                    for (int c = 0, n = append - 1; c < n; c++) System.out.print(' ');
+                    System.out.print(s);
+                    System.out.print(' ');
+                }
                 System.out.print('|');
             }
             System.out.println();
@@ -240,7 +238,6 @@ public class Reporter {
         int i = 1, j = i;
         for (; j < v.length; ) {
             for (; j < v.length && (v[j] == null || !v[j][0].startsWith(GROUP_KEY)); j++) ;
-            // TODO 多个分组可能导致数据无法对齐的问题
             String[][] _v = groupCompare(v, i, j);
             if (vv.length > 0) _v[0] = v[i - 1];
             String[][] newV = new String[vv.length + _v.length][];
