@@ -16,12 +16,21 @@ public class EasyBenchmarkTest {
        easyRead(RandomDataProvider.outPath.resolve("ignore.xlsx").toFile());
        easyRead(RandomDataProvider.outPath.resolve("ignore.xlsx").toFile());
        easyRead(RandomDataProvider.outPath.resolve("ignore.xlsx").toFile());
-       try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
-           stream.map(Path::toFile).filter(p -> {int i = p.getName().lastIndexOf(".xls"), n = p.getName().length(); return i == n - 4 || i == n - 5;})
-               .sorted(Comparator.comparingLong(File::length))
-               .forEach(EasyBenchmarkTest::easyRead);
-       } catch (IOException e) {
-           e.printStackTrace();
+       if (args.length == 0) {
+           try (Stream<Path> stream = Files.list(RandomDataProvider.outPath)) {
+               stream.map(Path::toFile).filter(p -> {
+                   int i = p.getName().lastIndexOf(".xls"), n = p.getName().length();
+                   return i == n - 4 || i == n - 5;
+               })
+                   .sorted(Comparator.comparingLong(File::length))
+                   .forEach(EasyBenchmarkTest::easyRead);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       } else {
+           for (String file : args) {
+               easyRead(RandomDataProvider.outPath.resolve(file).toFile());
+           }
        }
    }
 
