@@ -48,8 +48,8 @@ public class EasyWriteBenchmarkTest {
         long start = System.currentTimeMillis();
         ExcelWriter excelWriter = EasyExcel.write(subPath.toFile()).withTemplate(RandomDataProvider.outPath.getParent().resolve("fill.xlsx").toFile()).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();
-        for (int j = 0, p = Math.min(1000, n), c = n / p; j < c; j++) {
-            excelWriter.fill(RandomDataProvider.randomData(p), writeSheet);
+        for (int j = n, p; j > 0; j -= p) {
+            excelWriter.fill(RandomDataProvider.randomData(p = Math.min(100, j)), writeSheet);
         }
         excelWriter.finish();
         RandomDataProvider.println("[Easy] write \"" + subPath.getFileName() + "\" finished. Rows: " + n + " Cost(ms): " + (System.currentTimeMillis() - start));

@@ -54,11 +54,11 @@ public class EecWriteBenchmarkTest {
         long start = System.currentTimeMillis();
         try {
             new Workbook().addSheet(new ListSheet<LargeData>() {
-                int i = 0, p = Math.min(1000, n), c = n / p;
+                int i = n, p = 0;
 
                 @Override
                 protected List<LargeData> more() {
-                    return i++ < c ? RandomDataProvider.randomData(p) : null;
+                    return (i -= p) > 0 ? RandomDataProvider.randomData(p = Math.min(100, i)) : null;
                 }
             }).writeTo(path);
         } catch (IOException e) {
@@ -120,11 +120,11 @@ public class EecWriteBenchmarkTest {
                 new Column("str13").setShare(true),
                 new Column("str14").setShare(true),
                 new Column("str15").setShare(true)) {
-                int i = 0, p = Math.min(1000, n), c = n / p;
+                int i = n, p = 0;
 
                 @Override
                 protected List<LargeData> more() {
-                    return i++ < c ? RandomDataProvider.randomData(p) : null;
+                    return (i -= p) > 0 ? RandomDataProvider.randomData(p = Math.min(100, i)) : null;
                 }
             }).writeTo(path);
         } catch (IOException e) {
